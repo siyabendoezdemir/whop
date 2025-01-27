@@ -144,8 +144,14 @@ export default function WalletTracker() {
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
             Solana Wallet Explorer
           </h1>
+          <div className="flex items-center justify-center gap-2 mb-2">
+            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">
+              <span className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse mr-2"></span>
+              Devnet
+            </span>
+          </div>
           <p className="text-lg text-gray-600">
-            Track transactions and balance for any Solana wallet
+            Track transactions and balance for any Solana wallet on devnet
           </p>
         </div>
 
@@ -153,9 +159,14 @@ export default function WalletTracker() {
         <div className="bg-white rounded-xl shadow-sm p-6 mb-8">
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="flex-grow">
-              <label htmlFor="wallet-address" className="block text-sm font-medium text-gray-700 mb-2">
-                Wallet Address
-              </label>
+              <div className="flex items-center justify-between mb-2">
+                <label htmlFor="wallet-address" className="block text-sm font-medium text-gray-700">
+                  Wallet Address
+                </label>
+                <span className="text-xs text-yellow-600 font-medium">
+                  Devnet Only
+                </span>
+              </div>
               <input
                 id="wallet-address"
                 type="text"
