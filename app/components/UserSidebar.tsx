@@ -194,57 +194,57 @@ export default function UserSidebar() {
   };
 
   return (
-    <div className="fixed top-0 right-0 h-screen w-[400px] flex flex-col bg-white border-l border-gray-100 shadow-sm">
-      <div className="flex-none px-5 py-4 border-b border-gray-100">
+    <div className="fixed top-0 right-0 h-screen w-[400px] flex flex-col bg-white dark:bg-[#1C1C1C] border-l border-gray-100 dark:border-gray-800 shadow-sm">
+      <div className="flex-none px-5 py-4 border-b border-gray-100 dark:border-gray-800">
         <div className="flex items-center justify-between mb-5">
           <div className="flex items-center space-x-3">
             <button 
               onClick={() => {}} 
-              className="p-2 -ml-2 hover:bg-gray-50 rounded-lg transition-colors"
+              className="p-2 -ml-2 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg transition-colors"
             >
-              <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
             </button>
             <div className="flex items-center space-x-2">
-              <h2 className="text-[15px] font-semibold text-gray-900">Users</h2>
+              <h2 className="text-[15px] font-semibold text-gray-900 dark:text-white">Users</h2>
               <span className="text-sm text-gray-400">181</span>
             </div>
           </div>
           <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
-              <button className="text-sm text-gray-600 hover:text-gray-900 focus:outline-none flex items-center space-x-1.5 bg-gray-100 hover:bg-gray-200 px-3 py-1.5 rounded-lg transition-colors">
+              <button className="text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white focus:outline-none flex items-center space-x-1.5 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 px-3 py-1.5 rounded-lg transition-colors">
                 <span>{ALL_METRICS.find(m => m.id === activeSortDimension)?.label}</span>
                 <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
               </button>
             </PopoverTrigger>
-            <PopoverContent className="w-[320px] p-0" align="end">
+            <PopoverContent className="w-[320px] p-0 bg-white dark:bg-[#1C1C1C] border-gray-100 dark:border-gray-800" align="end">
               <div className="flex flex-col max-h-[400px]">
-                <div className="flex-none p-3 border-b border-gray-100">
+                <div className="flex-none p-3 border-b border-gray-100 dark:border-gray-800">
                   <div className="space-y-2">
-                    <div className="text-sm font-medium text-gray-900">Configure user metrics</div>
-                    <div className="text-xs text-gray-500">
+                    <div className="text-sm font-medium text-gray-900 dark:text-white">Configure user metrics</div>
+                    <div className="text-xs text-gray-500 dark:text-gray-400">
                       Choose which metrics to display and how to rank your users.
                     </div>
                   </div>
-                  <div className="mt-3 flex items-center px-2 py-1.5 bg-blue-50 rounded-lg">
-                    <svg className="w-4 h-4 text-blue-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="mt-3 flex items-center px-2 py-1.5 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                    <svg className="w-4 h-4 text-blue-600 dark:text-blue-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12" />
                     </svg>
-                    <span className="ml-2 text-sm text-blue-600">
+                    <span className="ml-2 text-sm text-blue-600 dark:text-blue-400">
                       Sorting by: {ALL_METRICS.find(m => m.id === activeSortDimension)?.label}
                     </span>
                   </div>
                 </div>
-                <div className="flex-1 overflow-y-auto min-h-0 scrollbar-thin scrollbar-thumb-gray-200 scrollbar-track-transparent hover:scrollbar-thumb-gray-300">
+                <div className="flex-1 overflow-y-auto min-h-0 scrollbar-thin scrollbar-thumb-gray-200 dark:scrollbar-thumb-gray-700 scrollbar-track-transparent hover:scrollbar-thumb-gray-300 dark:hover:scrollbar-thumb-gray-600">
                   <div className="p-3 space-y-4">
                     {METRIC_CATEGORIES.map((category) => (
                       <div key={category.name} className="space-y-2">
-                        <div className="px-2 sticky top-0 bg-white z-10 pb-2">
-                          <div className="font-medium text-sm text-gray-900">{category.name}</div>
-                          <div className="text-xs text-gray-500">{category.description}</div>
+                        <div className="px-2 sticky top-0 bg-white dark:bg-[#1C1C1C] z-10 pb-2">
+                          <div className="font-medium text-sm text-gray-900 dark:text-white">{category.name}</div>
+                          <div className="text-xs text-gray-500 dark:text-gray-400">{category.description}</div>
                         </div>
                         <div className="space-y-0.5">
                           {category.metrics.map((metric) => {
@@ -255,7 +255,7 @@ export default function UserSidebar() {
                               <div 
                                 key={metric.id} 
                                 className={`flex items-center px-2 py-2 rounded-lg group transition-colors ${
-                                  isSorting ? 'bg-blue-50' : 'hover:bg-gray-50'
+                                  isSorting ? 'bg-blue-50 dark:bg-blue-900/20' : 'hover:bg-gray-50 dark:hover:bg-gray-800'
                                 }`}
                               >
                                 <label className="flex items-center flex-1 min-w-0 cursor-pointer">
@@ -272,7 +272,7 @@ export default function UserSidebar() {
                                     }}
                                     disabled={isSorting && selectedDimensions.length === 1}
                                   />
-                                  <span className="ml-2.5 text-sm text-gray-600 group-hover:text-gray-900 truncate">
+                                  <span className="ml-2.5 text-sm text-gray-600 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white truncate">
                                     {metric.label}
                                   </span>
                                 </label>
@@ -283,10 +283,10 @@ export default function UserSidebar() {
                                   }}
                                   className={`px-2 py-1 rounded text-xs font-medium transition-colors ${
                                     isSorting 
-                                      ? 'text-blue-600 bg-blue-100'
+                                      ? 'text-blue-600 dark:text-blue-400 bg-blue-100 dark:bg-blue-900/40'
                                       : isSelected
-                                        ? 'text-gray-500 hover:text-blue-600'
-                                        : 'text-gray-300'
+                                        ? 'text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400'
+                                        : 'text-gray-300 dark:text-gray-600'
                                   }`}
                                   disabled={!isSelected}
                                 >
@@ -315,15 +315,15 @@ export default function UserSidebar() {
             placeholder="Search users"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-4 py-2.5 bg-gray-50 rounded-lg text-sm focus:outline-none focus:bg-gray-100 transition-colors"
+            className="w-full pl-9 pr-4 py-2.5 bg-gray-50 dark:bg-gray-800 rounded-lg text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-700 transition-colors"
           />
         </div>
       </div>
-      <div className="flex-1 overflow-y-auto min-h-0 divide-y divide-gray-100 scrollbar-thin scrollbar-thumb-gray-200 scrollbar-track-transparent hover:scrollbar-thumb-gray-300">
+      <div className="flex-1 overflow-y-auto min-h-0 divide-y divide-gray-100 dark:divide-gray-800 scrollbar-thin scrollbar-thumb-gray-200 dark:scrollbar-thumb-gray-700 scrollbar-track-transparent hover:scrollbar-thumb-gray-300 dark:hover:scrollbar-thumb-gray-600">
         {rankedUsers.map((user) => (
-          <div key={user.id} className="flex items-center px-5 py-3 hover:bg-gray-50 group transition-colors">
+          <div key={user.id} className="flex items-center px-5 py-3 hover:bg-gray-50 dark:hover:bg-gray-800 group transition-colors">
             <div className="relative flex-shrink-0">
-              <div className="w-10 h-10 relative rounded-full overflow-hidden bg-gray-100">
+              <div className="w-10 h-10 relative rounded-full overflow-hidden bg-gray-100 dark:bg-gray-800">
                 <Image
                   src={user.avatarUrl}
                   alt={user.username}
@@ -333,53 +333,53 @@ export default function UserSidebar() {
                 />
               </div>
               {user.rank <= 3 && (
-                <div className={`absolute -top-1 -left-1 w-5 h-5 flex items-center justify-center rounded-full text-xs font-medium text-white z-10 border-2 border-white shadow-sm
+                <div className={`absolute -top-1 -left-1 w-5 h-5 flex items-center justify-center rounded-full text-xs font-medium text-white z-10 border-2 border-white dark:border-[#1C1C1C] shadow-sm
                   ${user.rank === 1 ? 'bg-yellow-500' : 
                     user.rank === 2 ? 'bg-gray-400' : 
                     'bg-amber-700'}`}>
                   {user.rank}
                 </div>
               )}
-              <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-yellow-400 rounded-full border-2 border-white" />
+              <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-yellow-400 rounded-full border-2 border-white dark:border-[#1C1C1C]" />
             </div>
             <div className="ml-3 flex-1 min-w-0">
-              <div className="font-medium text-[15px] text-gray-900 truncate leading-5">{user.name}</div>
-              <div className="text-sm text-gray-500 truncate">@{user.username}</div>
+              <div className="font-medium text-[15px] text-gray-900 dark:text-white truncate leading-5">{user.name}</div>
+              <div className="text-sm text-gray-500 dark:text-gray-400 truncate">@{user.username}</div>
             </div>
             <div className="flex items-center gap-4">
-              <div className="flex items-center gap-1.5 text-sm font-medium tabular-nums text-gray-900">
+              <div className="flex items-center gap-1.5 text-sm font-medium tabular-nums text-gray-900 dark:text-white">
                 {activeSortDimension === 'timeSpent' && (
-                  <svg className="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="w-4 h-4 text-gray-500 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 )}
                 {(activeSortDimension === 'revenue' || activeSortDimension === 'arpu' || activeSortDimension === 'mrr') && (
-                  <svg className="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="w-4 h-4 text-gray-500 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 )}
                 {activeSortDimension === 'customers' && (
-                  <svg className="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="w-4 h-4 text-gray-500 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                   </svg>
                 )}
                 {(activeSortDimension === 'engagement' || activeSortDimension === 'growth' || activeSortDimension === 'conversion') && (
-                  <svg className="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="w-4 h-4 text-gray-500 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                   </svg>
                 )}
                 {activeSortDimension === 'satisfaction' && (
-                  <svg className="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="w-4 h-4 text-gray-500 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 )}
                 {activeSortDimension === 'products' && (
-                  <svg className="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="w-4 h-4 text-gray-500 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                   </svg>
                 )}
                 {activeSortDimension === 'reviews' && (
-                  <svg className="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="w-4 h-4 text-gray-500 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
                   </svg>
                 )}
@@ -387,16 +387,16 @@ export default function UserSidebar() {
               </div>
               <Popover>
                 <PopoverTrigger asChild>
-                  <button className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0">
+                  <button className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors flex-shrink-0">
                     <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </button>
                 </PopoverTrigger>
-                <PopoverContent className="w-[240px] p-0" align="end">
-                  <div className="px-2 py-1.5 border-b border-gray-100">
-                    <div className="font-medium text-sm text-gray-900">{user.name}</div>
-                    <div className="text-sm text-gray-500">@{user.username}</div>
+                <PopoverContent className="w-[240px] p-0 bg-white dark:bg-[#1C1C1C] border-gray-100 dark:border-gray-800" align="end">
+                  <div className="px-2 py-1.5 border-b border-gray-100 dark:border-gray-800">
+                    <div className="font-medium text-sm text-gray-900 dark:text-white">{user.name}</div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400">@{user.username}</div>
                   </div>
                   <div className="p-2 space-y-3">
                     {METRIC_CATEGORIES.map(category => {
@@ -408,7 +408,7 @@ export default function UserSidebar() {
                       
                       return (
                         <div key={category.name}>
-                          <div className="text-xs font-medium text-gray-500 mb-1.5">{category.name}</div>
+                          <div className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">{category.name}</div>
                           <div className="space-y-2">
                             {categoryMetrics.map(metric => {
                               const value = user.metrics[metric.id];
@@ -419,11 +419,11 @@ export default function UserSidebar() {
                                 <div 
                                   key={metric.id} 
                                   className={`flex items-center justify-between ${
-                                    isActive ? 'text-blue-600' : 'text-gray-600'
+                                    isActive ? 'text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-300'
                                   }`}
                                 >
                                   <span className="text-sm">{metric.label}</span>
-                                  <span className={`text-sm font-medium ${isActive ? 'text-blue-600' : 'text-gray-900'}`}>
+                                  <span className={`text-sm font-medium ${isActive ? 'text-blue-600 dark:text-blue-400' : 'text-gray-900 dark:text-white'}`}>
                                     {formattedValue}
                                   </span>
                                 </div>
