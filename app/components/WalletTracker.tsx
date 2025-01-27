@@ -4,14 +4,15 @@ import { useState } from 'react';
 import { Connection, PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 
+// Using a more reliable public RPC endpoint
+const connection = new Connection('https://rpc.helius.xyz/?api-key=1d14d4dd-e7e3-4e8f-b8d3-ffa0c2c13f8c');
+
 export default function WalletTracker() {
   const [address, setAddress] = useState('');
   const [balance, setBalance] = useState<number | null>(null);
   const [trades, setTrades] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-
-  const connection = new Connection('https://api.mainnet-beta.solana.com');
 
   const fetchWalletData = async () => {
     try {
