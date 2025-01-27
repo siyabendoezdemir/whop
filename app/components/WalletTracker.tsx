@@ -4,13 +4,14 @@ import { useState, useEffect } from 'react';
 import { Connection, PublicKey, LAMPORTS_PER_SOL, clusterApiUrl } from '@solana/web3.js';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 
-// Using Solana devnet endpoint for better rate limits and reliability
+// Using Solana devnet endpoint with higher rate limits
 const connection = new Connection(clusterApiUrl('devnet'), {
   commitment: 'confirmed',
-  wsEndpoint: 'wss://api.devnet.solana.com/'
+  wsEndpoint: 'wss://api.devnet.solana.com/',
+  confirmTransactionInitialTimeout: 60000
 });
 
-const DEFAULT_WALLET = '6FwX3We7adVpGTGACrfbkcSqPfWvF64px2a6yf7JbCTg';
+const DEFAULT_WALLET = '7C4jsPZpht42Tw6MjXWF56Q5RQUocjBBmciEjDa8HRtp';
 
 function parseTransactionType(tx: any): any {
   if (!tx.meta || !tx.transaction?.message) return { description: 'Unknown Transaction' };
@@ -61,6 +62,7 @@ export default function WalletTracker() {
     try {
       setLoading(true);
       setError('');
+      setTrades([]);
       
       // Validate address
       const pubKey = new PublicKey(addressInput);
@@ -73,35 +75,57 @@ export default function WalletTracker() {
         setBalance(0);
       }
 
-      // Get recent transactions
-      const signatures = await connection.getSignaturesForAddress(pubKey, { 
-        limit: 10
-      });
-      
-      // Get full transaction details
-      const transactions = await Promise.all(
-        signatures.map(async (sig) => {
-          try {
-            const tx = await connection.getParsedTransaction(sig.signature, {
-              maxSupportedTransactionVersion: 0
-            });
-            
-            if (!tx) return null;
-
-            return {
-              signature: sig.signature,
-              timestamp: sig.blockTime ? new Date(sig.blockTime * 1000).toLocaleString() : 'Unknown time',
-              successful: tx.meta?.err === null,
-              type: parseTransactionType(tx)
-            };
-          } catch (err) {
-            console.error('Error fetching transaction:', err);
-            return null;
-          }
-        })
+      // Get all signatures using getConfirmedSignaturesForAddress2
+      const allSignatures = await connection.getConfirmedSignaturesForAddress2(
+        pubKey,
+        { limit: 1000 } // Get up to 1000 signatures
       );
 
-      setTrades(transactions.filter(Boolean));
+      if (allSignatures.length === 0) return;
+
+      // Get transaction details in larger batches
+      const batchSize = 25; // Increased batch size
+      const allTransactions = [];
+
+      for (let i = 0; i < allSignatures.length; i += batchSize) {
+        const batch = allSignatures.slice(i, i + batchSize);
+        const batchTransactions = await Promise.all(
+          batch.map(async (sig) => {
+            try {
+              const tx = await connection.getParsedTransaction(sig.signature, {
+                maxSupportedTransactionVersion: 0,
+                commitment: 'confirmed'
+              });
+              
+              if (!tx) return null;
+
+              return {
+                signature: sig.signature,
+                timestamp: sig.blockTime ? new Date(sig.blockTime * 1000).toLocaleString() : 'Unknown time',
+                blockTime: sig.blockTime || 0,
+                successful: !sig.err,
+                type: parseTransactionType(tx)
+              };
+            } catch (err) {
+              console.error('Error fetching transaction:', err);
+              return null;
+            }
+          })
+        );
+
+        allTransactions.push(...batchTransactions.filter(Boolean));
+
+        // Add a small delay between batches
+        if (i + batchSize < allSignatures.length) {
+          await new Promise(resolve => setTimeout(resolve, 100));
+        }
+      }
+
+      // Sort by blockTime (newest first)
+      setTrades(allTransactions
+        .filter(tx => tx !== null)
+        .sort((a, b) => (b.blockTime || 0) - (a.blockTime || 0))
+      );
     } catch (err: any) {
       console.error('Wallet Data Error:', err);
       setError(err.message);
@@ -152,7 +176,9 @@ export default function WalletTracker() {
 
       {trades.length > 0 && (
         <div className="mt-8">
-          <h2 className="text-lg font-medium text-gray-900 mb-4">Recent Transactions</h2>
+          <h2 className="text-lg font-medium text-gray-900 mb-4">
+            All Transactions ({trades.length})
+          </h2>
           <div className="bg-white shadow overflow-hidden rounded-lg">
             <ul className="divide-y divide-gray-200">
               {trades.map((trade, index) => (
