@@ -190,6 +190,25 @@ export default function WalletTracker() {
                           {trade.signature}
                         </p>
                         <p className="text-sm text-gray-500">{trade.timestamp}</p>
+                        <div className="flex gap-2 mt-1">
+                          <a
+                            href={`https://explorer.solana.com/tx/${trade.signature}?cluster=devnet`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xs text-indigo-600 hover:text-indigo-800"
+                          >
+                            Solana Explorer
+                          </a>
+                          <span className="text-gray-300">|</span>
+                          <a
+                            href={`https://solscan.io/tx/${trade.signature}?cluster=devnet`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xs text-indigo-600 hover:text-indigo-800"
+                          >
+                            Solscan
+                          </a>
+                        </div>
                       </div>
                       <span
                         className={`px-2 py-1 text-xs font-medium rounded-full ${
