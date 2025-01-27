@@ -10,44 +10,39 @@ const connection = new Connection(clusterApiUrl('devnet'), {
   wsEndpoint: 'wss://api.devnet.solana.com/'
 });
 
-const DEFAULT_WALLET = '7C4jsPZpht42Tw6MjXWF56Q5RQUocjBBmciEjDa8HRtp';
+const DEFAULT_WALLET = '6FwX3We7adVpGTGACrfbkcSqPfWvF64px2a6yf7JbCTg';
 
-function parseTransactionType(tx: any): string {
-  if (!tx.meta?.logMessages) return 'Unknown Transaction';
+function parseTransactionType(tx: any): any {
+  if (!tx.meta || !tx.transaction?.message) return { description: 'Unknown Transaction' };
 
-  // Join all log messages to search through them
-  const logs = tx.meta.logMessages.join(' ');
+  const instructions = tx.transaction.message.instructions;
+  const parsedInstructions = tx.meta.innerInstructions?.[0]?.instructions || instructions;
+  const logs = tx.meta.logMessages || [];
+  const accounts = tx.transaction.message.accountKeys.map((key: any) => key.pubkey.toString());
   
-  // Look for common DEX and swap patterns
-  if (logs.includes('Swap')) {
-    // Try to find amounts and tokens
-    const amountPattern = /(\d+\.?\d*)\s*(SOL|USDC|USDT|RAY|SRM|[\w]+)/gi;
-    const matches = [...logs.matchAll(amountPattern)];
-    
-    if (matches.length >= 2) {
-      const [from, to] = matches;
-      return `Swapped ${from[1]} ${from[2]} for ${to[1]} ${to[2]}`;
+  // Get pre and post token balances
+  const preBalances = tx.meta.preBalances || [];
+  const postBalances = tx.meta.postBalances || [];
+  const balanceChanges = accounts.map((account: string, index: number) => {
+    const pre = preBalances[index] / LAMPORTS_PER_SOL;
+    const post = postBalances[index] / LAMPORTS_PER_SOL;
+    const change = post - pre;
+    if (change !== 0) {
+      return {
+        account,
+        change: change.toFixed(4)
+      };
     }
-    return 'Token Swap';
-  }
-  
-  if (logs.includes('Transfer')) {
-    const amountPattern = /(\d+\.?\d*)\s*(SOL|USDC|USDT|RAY|SRM|[\w]+)/gi;
-    const matches = [...logs.matchAll(amountPattern)];
-    if (matches.length > 0) {
-      const [amount] = matches;
-      return `Transferred ${amount[1]} ${amount[2]}`;
-    }
-    return 'Token Transfer';
-  }
+    return null;
+  }).filter(Boolean);
 
-  if (logs.includes('Deposit')) return 'Deposit';
-  if (logs.includes('Withdraw')) return 'Withdrawal';
-  if (logs.includes('Stake')) return 'Staking';
-  if (logs.includes('Create')) return 'Account Creation';
-  if (logs.includes('Close')) return 'Account Closure';
-
-  return 'Transaction';
+  return {
+    description: 'Transaction Details',
+    accounts,
+    balanceChanges,
+    logs: logs.filter((log: string) => !log.includes('Program log:')), // Filter out program logs
+    instructions: parsedInstructions
+  };
 }
 
 export default function WalletTracker() {
@@ -162,23 +157,47 @@ export default function WalletTracker() {
             <ul className="divide-y divide-gray-200">
               {trades.map((trade, index) => (
                 <li key={index} className="px-6 py-4">
-                  <div className="flex items-center justify-between">
-                    <div className="truncate">
-                      <p className="text-sm font-medium text-gray-900 truncate">
-                        {trade.signature}
-                      </p>
-                      <p className="text-sm text-gray-500">{trade.timestamp}</p>
-                      <p className="text-xs text-gray-400 mt-1 truncate">{trade.type}</p>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <div className="truncate">
+                        <p className="text-sm font-medium text-gray-900 truncate">
+                          {trade.signature}
+                        </p>
+                        <p className="text-sm text-gray-500">{trade.timestamp}</p>
+                      </div>
+                      <span
+                        className={`px-2 py-1 text-xs font-medium rounded-full ${
+                          trade.successful
+                            ? 'bg-green-100 text-green-800'
+                            : 'bg-red-100 text-red-800'
+                        }`}
+                      >
+                        {trade.successful ? 'Success' : 'Failed'}
+                      </span>
                     </div>
-                    <span
-                      className={`px-2 py-1 text-xs font-medium rounded-full ${
-                        trade.successful
-                          ? 'bg-green-100 text-green-800'
-                          : 'bg-red-100 text-red-800'
-                      }`}
-                    >
-                      {trade.successful ? 'Success' : 'Failed'}
-                    </span>
+
+                    {/* Balance Changes */}
+                    {trade.type.balanceChanges?.length > 0 && (
+                      <div className="mt-2">
+                        <p className="text-xs font-medium text-gray-500">Balance Changes:</p>
+                        {trade.type.balanceChanges.map((change: any, i: number) => (
+                          <p key={i} className="text-xs text-gray-600">
+                            {change.change > 0 ? '+' : ''}{change.change} SOL
+                            <span className="text-gray-400 ml-1">({change.account})</span>
+                          </p>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Transaction Logs */}
+                    {trade.type.logs?.length > 0 && (
+                      <div className="mt-2">
+                        <p className="text-xs font-medium text-gray-500">Logs:</p>
+                        {trade.type.logs.map((log: string, i: number) => (
+                          <p key={i} className="text-xs text-gray-600">{log}</p>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </li>
               ))}
