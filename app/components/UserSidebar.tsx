@@ -213,7 +213,7 @@ export default function UserSidebar() {
           </div>
           <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
-              <button className="text-sm text-gray-600 hover:text-gray-900 focus:outline-none flex items-center space-x-1.5">
+              <button className="text-sm text-gray-600 hover:text-gray-900 focus:outline-none flex items-center space-x-1.5 bg-gray-100 hover:bg-gray-200 px-3 py-1.5 rounded-lg transition-colors">
                 <span>{ALL_METRICS.find(m => m.id === activeSortDimension)?.label}</span>
                 <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
