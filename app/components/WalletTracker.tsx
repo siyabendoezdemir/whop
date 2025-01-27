@@ -11,7 +11,7 @@ const connection = new Connection(clusterApiUrl('devnet'), {
   confirmTransactionInitialTimeout: 60000
 });
 
-const DEFAULT_WALLET = '7C4jsPZpht42Tw6MjXWF56Q5RQUocjBBmciEjDa8HRtp';
+const DEFAULT_WALLET = '6FwX3We7adVpGTGACrfbkcSqPfWvF64px2a6yf7JbCTg';
 
 function parseTransactionType(tx: any): any {
   if (!tx.meta || !tx.transaction?.message) return { description: 'Unknown Transaction' };
@@ -137,110 +137,147 @@ export default function WalletTracker() {
   };
 
   return (
-    <div className="mt-8">
-      <div className="flex gap-4">
-        <input
-          type="text"
-          value={addressInput}
-          onChange={(e) => setAddressInput(e.target.value)}
-          placeholder="Enter Solana address..."
-          className="block w-full rounded-lg border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-3"
-        />
-        <button
-          onClick={fetchWalletData}
-          disabled={loading || !addressInput}
-          className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
-        >
-          {loading ? (
-            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white" />
-          ) : (
-            <MagnifyingGlassIcon className="h-5 w-5" />
-          )}
-        </button>
-      </div>
-
-      {error && (
-        <div className="mt-4 p-4 rounded-lg bg-red-50 text-red-700">
-          {error}
-        </div>
-      )}
-
-      {balance !== null && (
-        <div className="mt-8 p-6 bg-white rounded-lg shadow">
-          <h2 className="text-lg font-medium text-gray-900">Wallet Balance</h2>
-          <p className="mt-2 text-3xl font-bold text-indigo-600">
-            {balance.toFixed(4)} SOL
+    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-5xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">
+            Solana Wallet Explorer
+          </h1>
+          <p className="text-lg text-gray-600">
+            Track transactions and balance for any Solana wallet
           </p>
         </div>
-      )}
 
-      {trades.length > 0 && (
-        <div className="mt-8">
-          <h2 className="text-lg font-medium text-gray-900 mb-4">
-            All Transactions ({trades.length})
-          </h2>
-          <div className="bg-white shadow overflow-hidden rounded-lg">
+        {/* Search Box */}
+        <div className="bg-white rounded-xl shadow-sm p-6 mb-8">
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex-grow">
+              <label htmlFor="wallet-address" className="block text-sm font-medium text-gray-700 mb-2">
+                Wallet Address
+              </label>
+              <input
+                id="wallet-address"
+                type="text"
+                value={addressInput}
+                onChange={(e) => setAddressInput(e.target.value)}
+                placeholder="Enter Solana wallet address..."
+                className="block w-full rounded-lg border border-gray-300 bg-white text-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-base p-4 font-mono"
+              />
+            </div>
+            <div className="flex sm:items-end">
+              <button
+                onClick={fetchWalletData}
+                disabled={loading || !addressInput}
+                className="w-full sm:w-auto h-[52px] px-8 flex items-center justify-center rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+              >
+                {loading ? (
+                  <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent" />
+                ) : (
+                  <>
+                    <MagnifyingGlassIcon className="h-5 w-5 mr-2" />
+                    <span className="font-medium">Search</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {error && (
+          <div className="mb-8 p-4 rounded-lg bg-red-50 border border-red-200">
+            <p className="text-sm text-red-700">{error}</p>
+          </div>
+        )}
+
+        {balance !== null && (
+          <div className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl shadow-lg p-6 sm:p-8 mb-8 text-white">
+            <h2 className="text-xl font-medium text-white/90 mb-2">Wallet Balance</h2>
+            <div className="flex items-baseline flex-wrap gap-2">
+              <p className="text-4xl sm:text-5xl font-bold">{balance.toFixed(4)}</p>
+              <p className="text-lg sm:text-xl text-white/90">SOL</p>
+            </div>
+          </div>
+        )}
+
+        {trades.length > 0 && (
+          <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+            <div className="p-4 sm:p-6 border-b border-gray-200">
+              <h2 className="text-xl font-semibold text-gray-900">
+                Transaction History
+                <span className="ml-2 text-sm font-normal text-gray-500">
+                  ({trades.length} transactions)
+                </span>
+              </h2>
+            </div>
             <ul className="divide-y divide-gray-200">
               {trades.map((trade, index) => (
-                <li key={index} className="px-6 py-4">
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <div className="truncate">
-                        <p className="text-sm font-medium text-gray-900 truncate">
+                <li key={index} className="p-4 sm:p-6 hover:bg-gray-50 transition-colors duration-150">
+                  <div className="space-y-3">
+                    <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+                      <div className="space-y-1 min-w-0">
+                        <p className="text-sm font-mono text-gray-900 break-all">
                           {trade.signature}
                         </p>
                         <p className="text-sm text-gray-500">{trade.timestamp}</p>
-                        <div className="flex gap-2 mt-1">
+                        <div className="flex flex-wrap gap-3 mt-2">
                           <a
                             href={`https://explorer.solana.com/tx/${trade.signature}?cluster=devnet`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-xs text-indigo-600 hover:text-indigo-800"
+                            className="inline-flex items-center text-xs text-indigo-600 hover:text-indigo-800 transition-colors duration-150"
                           >
-                            Solana Explorer
+                            <span className="mr-1">🔍</span> Solana Explorer
                           </a>
-                          <span className="text-gray-300">|</span>
                           <a
                             href={`https://solscan.io/tx/${trade.signature}?cluster=devnet`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-xs text-indigo-600 hover:text-indigo-800"
+                            className="inline-flex items-center text-xs text-indigo-600 hover:text-indigo-800 transition-colors duration-150"
                           >
-                            Solscan
+                            <span className="mr-1">📊</span> Solscan
                           </a>
                         </div>
                       </div>
-                      <span
-                        className={`px-2 py-1 text-xs font-medium rounded-full ${
-                          trade.successful
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-red-100 text-red-800'
-                        }`}
-                      >
-                        {trade.successful ? 'Success' : 'Failed'}
-                      </span>
+                      <div className="flex-shrink-0">
+                        <span
+                          className={`inline-block px-3 py-1 text-xs font-medium rounded-full ${
+                            trade.successful
+                              ? 'bg-green-100 text-green-800'
+                              : 'bg-red-100 text-red-800'
+                          }`}
+                        >
+                          {trade.successful ? '✓ Success' : '✕ Failed'}
+                        </span>
+                      </div>
                     </div>
 
-                    {/* Balance Changes */}
                     {trade.type.balanceChanges?.length > 0 && (
-                      <div className="mt-2">
-                        <p className="text-xs font-medium text-gray-500">Balance Changes:</p>
-                        {trade.type.balanceChanges.map((change: any, i: number) => (
-                          <p key={i} className="text-xs text-gray-600">
-                            {change.change > 0 ? '+' : ''}{change.change} SOL
-                            <span className="text-gray-400 ml-1">({change.account})</span>
-                          </p>
-                        ))}
+                      <div className="bg-gray-50 rounded-lg p-3">
+                        <p className="text-xs font-medium text-gray-500 mb-2">Balance Changes</p>
+                        <div className="space-y-1">
+                          {trade.type.balanceChanges.map((change: any, i: number) => (
+                            <p key={i} className="text-sm flex flex-wrap items-center gap-2">
+                              <span className={change.change > 0 ? 'text-green-600' : 'text-red-600'}>
+                                {change.change > 0 ? '+' : ''}{change.change} SOL
+                              </span>
+                              <span className="text-gray-400 text-xs break-all">
+                                ({change.account})
+                              </span>
+                            </p>
+                          ))}
+                        </div>
                       </div>
                     )}
 
-                    {/* Transaction Logs */}
                     {trade.type.logs?.length > 0 && (
-                      <div className="mt-2">
-                        <p className="text-xs font-medium text-gray-500">Logs:</p>
-                        {trade.type.logs.map((log: string, i: number) => (
-                          <p key={i} className="text-xs text-gray-600">{log}</p>
-                        ))}
+                      <div className="bg-gray-50 rounded-lg p-3 overflow-x-auto">
+                        <p className="text-xs font-medium text-gray-500 mb-2">Transaction Logs</p>
+                        <div className="space-y-1">
+                          {trade.type.logs.map((log: string, i: number) => (
+                            <p key={i} className="text-xs text-gray-600 font-mono whitespace-pre-wrap">{log}</p>
+                          ))}
+                        </div>
                       </div>
                     )}
                   </div>
@@ -248,8 +285,8 @@ export default function WalletTracker() {
               ))}
             </ul>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 } 
